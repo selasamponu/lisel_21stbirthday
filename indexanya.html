@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Birthday Invitation</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  font-family:'Poppins',sans-serif;
+  overflow:hidden;
+}
+
+/* BACKGROUND */
+.bg-photo{
+  position:fixed;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  z-index:-2;
+}
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.35);
+  z-index:-1;
+}
+
+/* SPARKLES */
+.sparkle{
+  position:fixed;
+  top:-10px;
+  width:4px;
+  height:4px;
+  background:gold;
+  border-radius:50%;
+  opacity:.8;
+  animation:fall linear infinite;
+}
+@keyframes fall{
+  to{transform:translateY(110vh);opacity:0;}
+}
+
+/* CARD */
+.card{
+  display:none;
+  width:100%;
+  max-width:460px;
+  padding:40px 28px;
+  border-radius:26px;
+  text-align:center;
+  color:#fff;
+  backdrop-filter:blur(6px);
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.2);
+}
+.card.active{display:block}
+
+.title{font-family:'Great Vibes',cursive;font-size:42px}
+.subtitle{font-size:14px;opacity:.9;margin-bottom:20px}
+
+.box{
+  background:#fff;
+  color:#000;
+  padding:16px;
+  border-radius:16px;
+  margin-bottom:14px;
+  cursor:pointer;
+  font-weight:600;
+}
+
+.btn{
+  margin-top:18px;
+  padding:14px 38px;
+  border-radius:30px;
+  background:gold;
+  border:none;
+  cursor:pointer;
+}
+
+.footer{margin-top:20px;font-size:13px}
+
+/* MODAL TRANSPARENT */
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(255,255,255,0.08);
+  backdrop-filter:blur(10px);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  opacity:0;
+  visibility:hidden;
+  transition:.3s;
+  z-index:20;
+}
+.modal.active{
+  opacity:1;
+  visibility:visible;
+}
+
+.modal-content{
+  background:rgba(0,0,0,0.6);
+  padding:28px;
+  border-radius:20px;
+  width:90%;
+  max-width:380px;
+  text-align:center;
+  color:#fff;
+  position:relative;
+}
+
+.close{
+  position:absolute;
+  top:10px;
+  right:15px;
+  font-size:20px;
+  cursor:pointer;
+  color:gold;
+}
+
+/* GALLERY SLIDER */
+.gallery{
+  display:flex;
+  overflow-x:auto;
+  gap:12px;
+  scroll-snap-type:x mandatory;
+  padding-top:10px;
+}
+
+.gallery img{
+  flex:0 0 100%;
+  max-height:320px;
+  width:100%;
+  object-fit:contain;
+  border-radius:16px;
+  scroll-snap-align:center;
+}
+
+.modal-content a{
+  color:gold;
+  text-decoration:none;
+  font-weight:600;
+}
+</style>
+</head>
+
+<body>
+
+<img src="background.jpg" class="bg-photo">
+
+<!-- PAGE 1 -->
+<div class="card active" id="page1">
+  <div class="title">Happy Birthday</div>
+  <div class="subtitle">We invite you to celebrate a 21st birthday dinner</div>
+
+  <div class="box" onclick="showGallery()">📸 21st Birthday Lisel</div>
+  <div class="box" onclick="showInfo('date')">📅 Date</div>
+  <div class="box" onclick="showInfo('time')">⏰ Time</div>
+
+  <div>💌 From Manis</div>
+  <button class="btn" onclick="nextPage()">Next</button>
+</div>
+
+<!-- PAGE 2 -->
+<div class="card" id="page2">
+  <div class="title">Event Information</div>
+
+  <div class="box" onclick="showInfo('dress')">👗 Dress Code</div>
+  <div class="box" onclick="showInfo('location')">📍 Location</div>
+
+  <button class="btn" onclick="backPage()">Back</button>
+  <div class="footer">✨ Your presence is greatly appreciated ✨</div>
+</div>
+
+<!-- INFO MODAL -->
+<div class="modal" id="infoModal">
+  <div class="modal-content">
+    <span class="close" onclick="closeInfo()">✖</span>
+    <div id="infoText"></div>
+  </div>
+</div>
+
+<!-- GALLERY MODAL -->
+<div class="modal" id="galleryModal">
+  <div class="modal-content">
+    <span class="close" onclick="closeGallery()">✖</span>
+    <div class="gallery">
+      <img src="WhatsApp Image 2026-02-11 at 13.51.27.jpg">
+      <img src="WhatsApp Image 2026-02-12 at 11.54.26.jpg">
+    </div>
+  </div>
+</div>
+
+<script>
+
+/* PAGE SWITCH */
+function nextPage(){
+  page1.classList.remove("active");
+  page2.classList.add("active");
+}
+function backPage(){
+  page2.classList.remove("active");
+  page1.classList.add("active");
+}
+
+/* SPARKLES */
+for(let i=0;i<40;i++){
+  let s=document.createElement("div");
+  s.className="sparkle";
+  s.style.left=Math.random()*100+"vw";
+  s.style.animationDuration=3+Math.random()*5+"s";
+  s.style.animationDelay=Math.random()*5+"s";
+  document.body.appendChild(s);
+}
+
+/* INFO POPUP */
+function showInfo(type){
+  if(type==="date"){
+    infoText.innerHTML="📅 <h3>Monday, March 2, 2026</h3>";
+  }
+  if(type==="time"){
+    infoText.innerHTML="⏰ <h3>7:00 PM WIB – Until the End</h3>";
+  }
+  if(type==="dress"){
+    infoText.innerHTML="👗 <h3>Dress Code: Black</h3>";
+  }
+  if(type==="location"){
+    infoText.innerHTML=`📍 <h3>CAMPAGNA</h3>
+    <br><a href="https://maps.app.goo.gl/VKjyX5UvuFBmSq22A">
+    👉 Open in Google Maps</a>`;
+  }
+  infoModal.classList.add("active");
+}
+function closeInfo(){
+  infoModal.classList.remove("active");
+}
+
+/* GALLERY POPUP */
+function showGallery(){
+  galleryModal.classList.add("active");
+}
+function closeGallery(){
+  galleryModal.classList.remove("active");
+}
+
+</script>
+
+</body>
+</html>
